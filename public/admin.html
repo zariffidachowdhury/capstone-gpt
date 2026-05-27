@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capstone GPT Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --capstone-ink: #1f2937;
+            --capstone-wine: #8b2331;
+            --capstone-cream: #f8f1eb;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--capstone-ink);
+            background:
+                radial-gradient(circle at top left, rgba(139, 35, 49, 0.15), transparent 25%),
+                linear-gradient(180deg, #fffaf7 0%, #f4f1ee 100%);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Source Serif 4', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl space-y-6">
+        <header class="rounded-[28px] border border-white/70 bg-white/85 px-5 py-5 shadow-[0_18px_70px_rgba(71,45,35,0.12)] backdrop-blur sm:px-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.32em] text-stone-500">Instructor View</p>
+                    <h1 class="mt-2 text-4xl font-bold text-stone-950">Instructor Dashboard</h1>
+                    <p class="mt-2 max-w-2xl text-sm text-stone-600">A presentation-ready analytics panel showing how the prototype is being used, which topics are active, and how students rate the usefulness of responses.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a id="export-csv-btn" href="/api/export.php?format=csv" class="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-700 transition hover:border-stone-400 hover:text-stone-900">Export CSV</a>
+                    <a href="index.html" class="inline-flex items-center justify-center rounded-2xl bg-[var(--capstone-wine)] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90">Back to Chat</a>
+                </div>
+            </div>
+        </header>
+
+        <section id="stats-status" class="rounded-2xl border border-stone-200 bg-white/80 px-4 py-3 text-sm text-stone-600 shadow-sm">
+            Loading analytics...
+        </section>
+
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Total Questions</p>
+                <p id="total-questions" class="mt-3 text-4xl font-bold text-stone-950">0</p>
+            </article>
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Top Topic</p>
+                <p id="top-topic" class="mt-3 text-2xl font-bold text-stone-950">No data</p>
+            </article>
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Conversations</p>
+                <p id="conversation-count" class="mt-3 text-4xl font-bold text-stone-950">0</p>
+                <p class="mt-2 text-sm text-stone-600">tracked discussion threads</p>
+            </article>
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Average Depth</p>
+                <p id="average-depth" class="mt-3 text-4xl font-bold text-stone-950">0</p>
+                <p class="mt-2 text-sm text-stone-600">questions per conversation</p>
+            </article>
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Feedback Rate</p>
+                <p id="feedback-rate" class="mt-3 text-4xl font-bold text-stone-950">0%</p>
+                <p class="mt-2 text-sm text-stone-600"><span id="thumbs-up-count">0</span> up / <span id="thumbs-down-count">0</span> down</p>
+            </article>
+            <article class="rounded-[24px] border border-stone-200 bg-white/90 px-5 py-5 shadow-sm">
+                <p class="text-xs uppercase tracking-[0.28em] text-stone-500">Latest Active Topic</p>
+                <p id="latest-active-topic" class="mt-3 text-lg font-semibold text-stone-950">No data</p>
+                <p id="latest-activity" class="mt-2 text-sm text-stone-600">No recent activity</p>
+            </article>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-[1.05fr_1.25fr]">
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-stone-950">Questions by topic</h2>
+                        <p class="text-sm text-stone-600">A quick view of where students are spending their attention.</p>
+                    </div>
+                </div>
+                <div id="topic-bars" class="mt-5 space-y-4"></div>
+            </article>
+
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <h2 class="text-2xl font-semibold text-stone-950">Daily activity</h2>
+                <p class="text-sm text-stone-600">Questions asked over the last seven days.</p>
+                <div id="daily-bars" class="mt-6 grid grid-cols-7 gap-3"></div>
+            </article>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-[1.2fr_0.95fr]">
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <h2 class="text-2xl font-semibold text-stone-950">Recent prompts</h2>
+                <p class="text-sm text-stone-600">Useful for instructor review, especially when paired with explicit thumbs up/down feedback.</p>
+                <div id="recent-prompts" class="mt-5 space-y-3"></div>
+            </article>
+
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <h2 class="text-2xl font-semibold text-stone-950">Most active conversation</h2>
+                <div id="most-active-card" class="mt-5 rounded-[24px] border border-stone-200 bg-[var(--capstone-cream)] px-4 py-4 text-stone-700">
+                    No conversation data available yet.
+                </div>
+            </article>
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <h2 class="text-2xl font-semibold text-stone-950">Feedback snapshot</h2>
+                <p class="text-sm text-stone-600">A fast read on whether students are finding the answers useful.</p>
+                <div id="feedback-summary" class="mt-5 rounded-[24px] border border-stone-200 bg-[var(--capstone-cream)] px-4 py-4 text-stone-700">
+                    No feedback has been captured yet.
+                </div>
+            </article>
+
+            <article class="rounded-[28px] border border-stone-200 bg-white/88 px-5 py-5 shadow-sm sm:px-6">
+                <h2 class="text-2xl font-semibold text-stone-950">Recent low-rated prompts</h2>
+                <p class="text-sm text-stone-600">A targeted list of responses that may need prompt or knowledge-base refinement.</p>
+                <div id="negative-feedback-list" class="mt-5 space-y-3"></div>
+            </article>
+        </section>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

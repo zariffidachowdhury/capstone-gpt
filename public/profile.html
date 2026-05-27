@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Capstone GPT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --capstone-ink: #1f2937;
+            --capstone-muted: #6b7280;
+            --capstone-wine: #8b2331;
+            --capstone-wine-dark: #631723;
+            --capstone-cream: #f8f1eb;
+            --capstone-sand: #eadfd4;
+            --capstone-surface: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--capstone-ink);
+            background:
+                radial-gradient(circle at top left, rgba(139, 35, 49, 0.16), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(234, 223, 212, 0.85), transparent 30%),
+                linear-gradient(180deg, #fffaf7 0%, #f7f5f2 100%);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Source Serif 4', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
+    <main class="mx-auto max-w-4xl space-y-6">
+        <header class="rounded-[32px] border border-white/70 bg-[var(--capstone-surface)] px-5 py-5 shadow-[0_18px_70px_rgba(71,45,35,0.12)] backdrop-blur sm:px-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.32em] text-stone-500">CSE 448/449</p>
+                    <h1 class="mt-2 text-4xl font-bold text-stone-950">Student Profile</h1>
+                    <p id="profile-identity" class="mt-2 text-sm text-stone-600">Loading account...</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="index.html" class="inline-flex items-center justify-center rounded-2xl bg-[var(--capstone-wine)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--capstone-wine-dark)]">Back to Chat</a>
+                    <button type="button" id="logout-btn" class="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white/90 px-4 py-2.5 text-sm font-medium text-stone-700 transition hover:border-stone-400 hover:text-stone-900">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="rounded-[32px] border border-white/70 bg-white/90 px-5 py-5 shadow-[0_24px_90px_rgba(71,45,35,0.12)] backdrop-blur sm:px-6">
+            <form id="profile-form" class="space-y-5">
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="major" class="text-sm font-medium text-stone-700">Major</label>
+                        <input
+                            type="text"
+                            id="major"
+                            class="mt-2 min-h-[52px] w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-900 outline-none transition focus:border-[var(--capstone-wine)] focus:ring-2 focus:ring-[rgba(139,35,49,0.15)]"
+                            placeholder="Computer Science"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="course-section" class="text-sm font-medium text-stone-700">Course section</label>
+                        <select
+                            id="course-section"
+                            class="mt-2 min-h-[52px] w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-900 outline-none transition focus:border-[var(--capstone-wine)] focus:ring-2 focus:ring-[rgba(139,35,49,0.15)]"
+                        >
+                            <option value="CSE448">CSE448</option>
+                            <option value="CSE449">CSE449</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="project-idea" class="text-sm font-medium text-stone-700">Project idea</label>
+                    <textarea
+                        id="project-idea"
+                        rows="5"
+                        class="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-900 outline-none transition focus:border-[var(--capstone-wine)] focus:ring-2 focus:ring-[rgba(139,35,49,0.15)]"
+                        placeholder="A short description of the problem, users, and likely technical direction."
+                    ></textarea>
+                </div>
+
+                <div>
+                    <label for="teammates" class="text-sm font-medium text-stone-700">Teammates</label>
+                    <textarea
+                        id="teammates"
+                        rows="4"
+                        class="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-900 outline-none transition focus:border-[var(--capstone-wine)] focus:ring-2 focus:ring-[rgba(139,35,49,0.15)]"
+                        placeholder="One teammate per line"
+                    ></textarea>
+                </div>
+
+                <p id="profile-status" class="hidden rounded-2xl border px-4 py-3 text-sm" aria-live="polite"></p>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                    <a href="index.html" class="inline-flex min-h-[52px] items-center justify-center rounded-2xl border border-stone-300 bg-white px-5 py-3 text-sm font-semibold text-stone-700 transition hover:border-stone-400 hover:text-stone-900">Cancel</a>
+                    <button
+                        type="submit"
+                        id="save-profile-btn"
+                        class="inline-flex min-h-[52px] items-center justify-center rounded-2xl bg-stone-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        Save Profile
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = `${window.location.origin}/api`;
+        const AUTH_URL = `${API_BASE}/auth.php`;
+        const PROFILE_URL = `${API_BASE}/profile.php`;
+        const SESSION_TOKEN_KEY = 'capstoneSessionToken';
+        const USER_PROFILE_KEY = 'capstoneUserProfile';
+
+        const identityEl = document.getElementById('profile-identity');
+        const form = document.getElementById('profile-form');
+        const majorInput = document.getElementById('major');
+        const projectIdeaInput = document.getElementById('project-idea');
+        const teammatesInput = document.getElementById('teammates');
+        const courseSectionInput = document.getElementById('course-section');
+        const statusEl = document.getElementById('profile-status');
+        const saveBtn = document.getElementById('save-profile-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        function getSessionToken() {
+            return localStorage.getItem(SESSION_TOKEN_KEY) || '';
+        }
+
+        function redirectToLogin() {
+            window.location.replace('login.html');
+        }
+
+        function clearSession() {
+            localStorage.removeItem(SESSION_TOKEN_KEY);
+            localStorage.removeItem(USER_PROFILE_KEY);
+        }
+
+        async function apiFetch(url, options = {}) {
+            const token = getSessionToken();
+            const headers = new Headers(options.headers || {});
+
+            if (options.body && !headers.has('Content-Type')) {
+                headers.set('Content-Type', 'application/json');
+            }
+
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+
+            const response = await fetch(url, {
+                ...options,
+                headers,
+            });
+
+            if (response.status === 401) {
+                clearSession();
+                redirectToLogin();
+                throw new Error('Session expired. Please sign in again.');
+            }
+
+            return response;
+        }
+
+        function setStatus(message, tone = 'success', hidden = false) {
+            statusEl.textContent = message;
+            statusEl.className = hidden
+                ? 'hidden rounded-2xl border px-4 py-3 text-sm'
+                : `rounded-2xl border px-4 py-3 text-sm ${tone === 'danger' ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`;
+        }
+
+        function renderProfile(user) {
+            identityEl.textContent = `${user.display_name || 'Student'} · ${user.email || 'Signed in'}`;
+            majorInput.value = user.major || '';
+            projectIdeaInput.value = user.project_idea || '';
+            teammatesInput.value = Array.isArray(user.teammates) ? user.teammates.join('\n') : '';
+            courseSectionInput.value = user.course_section || 'CSE449';
+        }
+
+        function parseTeammates(value) {
+            return value
+                .split(/[\n,]+/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        async function loadProfile() {
+            if (!getSessionToken()) {
+                redirectToLogin();
+                return;
+            }
+
+            const cached = localStorage.getItem(USER_PROFILE_KEY);
+            if (cached) {
+                try {
+                    renderProfile(JSON.parse(cached));
+                } catch (error) {
+                    localStorage.removeItem(USER_PROFILE_KEY);
+                }
+            }
+
+            const response = await apiFetch(`${AUTH_URL}?action=me`);
+            if (!response.ok) {
+                throw new Error('Unable to load profile');
+            }
+
+            const data = await response.json();
+            if (data.user) {
+                localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(data.user));
+                renderProfile(data.user);
+            }
+        }
+
+        async function saveProfile(event) {
+            event.preventDefault();
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            setStatus('', 'success', true);
+
+            try {
+                const response = await apiFetch(PROFILE_URL, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        major: majorInput.value.trim(),
+                        project_idea: projectIdeaInput.value.trim(),
+                        teammates: parseTeammates(teammatesInput.value),
+                        course_section: courseSectionInput.value,
+                    }),
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(data.error || 'Profile could not be saved');
+                }
+
+                localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(data.user));
+                renderProfile(data.user);
+                setStatus('Profile saved. Future chat prompts will include this context.', 'success');
+            } catch (error) {
+                setStatus(error instanceof Error ? error.message : 'Profile could not be saved', 'danger');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Profile';
+            }
+        }
+
+        async function logout() {
+            logoutBtn.disabled = true;
+            logoutBtn.textContent = 'Logging out...';
+
+            try {
+                await apiFetch(`${AUTH_URL}?action=logout`, { method: 'POST' });
+            } catch (error) {
+                // Local session cleanup still happens if the server call fails.
+            }
+
+            clearSession();
+            redirectToLogin();
+        }
+
+        form.addEventListener('submit', saveProfile);
+        logoutBtn.addEventListener('click', logout);
+        loadProfile().catch((error) => setStatus(error instanceof Error ? error.message : 'Profile could not be loaded', 'danger'));
+    </script>
+</body>
+</html>
