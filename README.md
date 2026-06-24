@@ -48,9 +48,21 @@ flowchart LR
 - Chat logs, feedback, and CSV export are treated as sensitive operational data and should not be published with the repository.
 - `api/config.local.php` is ignored by Git; use `api/config.local.example.php` as the template for local setup.
 
-## Screenshot
+## Screenshots
 
-Screenshot placeholder lives in [docs/screenshots/README.md](docs/screenshots/README.md). A real UI screenshot should be added only after confirming that the local database, chat history, browser storage, and Dify workspace contain no private data.
+> Captured from a local run against the live Dify RAG workflow, using a throwaway test account and sample data only.
+
+**Student chat — a course-grounded response**
+
+![Capstone GPT student chat with a course-grounded Dify response](docs/screenshots/chat.png)
+
+**Instructor analytics dashboard**
+
+![Capstone GPT instructor analytics dashboard](docs/screenshots/dashboard.png)
+
+| Login | Student profile |
+| --- | --- |
+| ![Login page](docs/screenshots/login.png) | ![Student profile page](docs/screenshots/profile.png) |
 
 ## Setup
 
